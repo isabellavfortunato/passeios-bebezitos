@@ -2497,6 +2497,8 @@ const MED_SEED = {
   }],
   rotinaCheck: {},
   // { "AAAA-MM-DD": { r1: true, ... } }
+  joeyCal: {},
+  // calendário de 30 dias dos remédios do Joey, por data
   dividas: {
     titulo: "Vacinação com a Alessandra",
     total: 2943,
@@ -3800,6 +3802,309 @@ const lab = {
   letterSpacing: ".02em"
 };
 
+/* ---------- Calendário de 30 dias dos remédios do Joey ---------- */
+const JOEY_CAL_INICIO = "2026-11-07";
+const JOEY_CAL_DIAS = 30;
+const JOEY_CAL_MEDS = [{
+  id: "acetil",
+  nome: "Acetilcisteína 2,5 ml",
+  dias: 14
+}, {
+  id: "amino",
+  nome: "Aminofilina ½ comprimido",
+  dias: 30
+}, {
+  id: "doxifin",
+  nome: "Doxifin 1 comprimido (com a comida)",
+  dias: 14
+}, {
+  id: "flixotide",
+  nome: "Flixotide no espaçador, 30 segundos",
+  dias: 30
+}];
+const JOEY_CAL_DOSES = ["Manhã", "Noite"];
+function ymdLocal(dt) {
+  const off = dt.getTimezoneOffset() * 60000;
+  return new Date(dt.getTime() - off).toISOString().slice(0, 10);
+}
+function joeyDataDoDia(d) {
+  const dt = new Date(JOEY_CAL_INICIO + "T12:00:00");
+  dt.setDate(dt.getDate() + (d - 1));
+  return ymdLocal(dt);
+}
+function joeyDosesDoDia(d) {
+  const list = [];
+  JOEY_CAL_MEDS.forEach(function (m) {
+    if (d <= m.dias) JOEY_CAL_DOSES.forEach(function (lab, i) {
+      list.push({
+        id: m.id + "_" + i,
+        med: m.nome,
+        dose: lab
+      });
+    });
+  });
+  return list;
+}
+function TelaCalendarioJoey({
+  med,
+  onMed
+}) {
+  const cal = med.joeyCal || {};
+  const hoje = todayStr();
+  function statusDia(d) {
+    const chk = cal[joeyDataDoDia(d)] || {};
+    const list = joeyDosesDoDia(d);
+    return {
+      total: list.length,
+      feitos: list.filter(function (x) {
+        return chk[x.id];
+      }).length
+    };
+  }
+  function diaInicial() {
+    for (let d = 1; d <= JOEY_CAL_DIAS; d++) if (joeyDataDoDia(d) === hoje) return d;
+    return hoje < JOEY_CAL_INICIO ? 1 : JOEY_CAL_DIAS;
+  }
+  const [sel, setSel] = useState(diaInicial);
+  function toggle(d, doseId) {
+    const n = clonar(med);
+    if (!n.joeyCal) n.joeyCal = {};
+    const date = joeyDataDoDia(d);
+    const dia = Object.assign({}, n.joeyCal[date] || {});
+    if (dia[doseId]) delete dia[doseId];else dia[doseId] = true;
+    n.joeyCal[date] = dia;
+    onMed(n);
+  }
+  function togglePrel(i) {
+    const n = clonar(med);
+    if (!n.joeyCal) n.joeyCal = {};
+    const p = Object.assign({}, n.joeyCal.prelone || {});
+    if (p[i]) delete p[i];else p[i] = true;
+    n.joeyCal.prelone = p;
+    onMed(n);
+  }
+  const selDate = joeyDataDoDia(sel);
+  const selChk = cal[selDate] || {};
+  const selDoses = joeyDosesDoDia(sel);
+  const prel = cal.prelone || {};
+  let totG = 0,
+    feitG = 0;
+  for (let d = 1; d <= JOEY_CAL_DIAS; d++) {
+    const s = statusDia(d);
+    totG += s.total;
+    feitG += s.feitos;
+  }
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: "0 0 14px",
+      fontSize: 13.5,
+      color: C.mid,
+      lineHeight: 1.6
+    }
+  }, "Plano de 30 dias, de 07/11 a 06/12/2026. Toque num dia para abrir os remédios daquele dia e marcar o que já foi dado. Cada dia tem a própria marcação, então renova sozinho. ", feitG, " de ", totG, " doses marcadas no mês."), /*#__PURE__*/React.createElement(Cartao, {
+    estilo: {
+      padding: "14px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "repeat(6,1fr)",
+      gap: 6
+    }
+  }, Array.from({
+    length: JOEY_CAL_DIAS
+  }, function (_, k) {
+    const d = k + 1;
+    const s = statusDia(d);
+    const date = joeyDataDoDia(d);
+    const completo = s.total > 0 && s.feitos === s.total;
+    const parcial = s.feitos > 0 && !completo;
+    const ehHoje = date === hoje;
+    const selecionado = d === sel;
+    const bg = completo ? C.done : parcial ? C.plan : C.surfaceAlt;
+    const cor = completo ? "#fff" : C.deep;
+    return /*#__PURE__*/React.createElement("button", {
+      key: d,
+      onClick: function () {
+        setSel(d);
+      },
+      style: {
+        aspectRatio: "1/1",
+        borderRadius: 10,
+        border: selecionado ? "2px solid " + C.strong : ehHoje ? "2px solid " + C.gold : "1px solid " + C.line,
+        background: bg,
+        color: cor,
+        cursor: "pointer",
+        fontFamily: "inherit",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 1,
+        padding: 0
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontFamily: "Georgia, serif",
+        fontWeight: 700,
+        fontSize: 15
+      }
+    }, new Date(date + "T12:00:00").getDate()), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 9,
+        opacity: 0.85
+      }
+    }, completo ? "ok" : s.total ? s.feitos + "/" + s.total : ""));
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexWrap: "wrap",
+      gap: 14,
+      marginTop: 12,
+      fontSize: 12,
+      color: C.mid
+    }
+  }, /*#__PURE__*/React.createElement(Legenda, {
+    cor: C.done,
+    texto: "Tudo dado"
+  }), /*#__PURE__*/React.createElement(Legenda, {
+    cor: C.plan,
+    borda: C.mid,
+    texto: "Em parte"
+  }), /*#__PURE__*/React.createElement(Legenda, {
+    cor: C.surfaceAlt,
+    borda: C.gold,
+    texto: "Hoje"
+  }))), /*#__PURE__*/React.createElement(Cartao, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "Georgia, serif",
+      fontSize: 18,
+      fontWeight: 700,
+      color: C.deep,
+      marginBottom: 2
+    }
+  }, dataBR(selDate), selDate === hoje ? " (hoje)" : ""), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: C.soft,
+      marginBottom: 12
+    }
+  }, "Dia ", sel, " de ", JOEY_CAL_DIAS), JOEY_CAL_DOSES.map(function (lab) {
+    const doses = selDoses.filter(function (x) {
+      return x.dose === lab;
+    });
+    if (!doses.length) return null;
+    return /*#__PURE__*/React.createElement("div", {
+      key: lab,
+      style: {
+        marginBottom: 12
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 12,
+        fontWeight: 700,
+        letterSpacing: ".08em",
+        textTransform: "uppercase",
+        color: C.soft,
+        marginBottom: 8
+      }
+    }, lab), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        gap: 8
+      }
+    }, doses.map(function (x) {
+      const on = !!selChk[x.id];
+      return /*#__PURE__*/React.createElement("button", {
+        key: x.id,
+        onClick: function () {
+          toggle(sel, x.id);
+        },
+        style: {
+          display: "flex",
+          alignItems: "center",
+          gap: 11,
+          width: "100%",
+          textAlign: "left",
+          border: "1px solid " + (on ? C.strong : C.line),
+          background: on ? C.plan : C.surface,
+          borderRadius: 11,
+          padding: "11px 12px",
+          cursor: "pointer",
+          fontFamily: "inherit"
+        }
+      }, /*#__PURE__*/React.createElement("span", {
+        style: {
+          flexShrink: 0,
+          width: 26,
+          height: 26,
+          borderRadius: 7,
+          border: "1px solid " + (on ? C.strong : C.line),
+          background: on ? C.done : C.surface,
+          color: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 15
+        }
+      }, on ? "✓" : ""), /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontSize: 14.5,
+          color: on ? C.soft : C.deep,
+          textDecoration: on ? "line-through" : "none"
+        }
+      }, x.med));
+    })));
+  }), selDoses.length === 0 && /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: 0,
+      fontSize: 13.5,
+      color: C.soft
+    }
+  }, "Sem remédios programados neste dia.")), /*#__PURE__*/React.createElement(Cartao, null, /*#__PURE__*/React.createElement("h3", {
+    style: {
+      fontFamily: "Georgia, serif",
+      fontSize: 17,
+      fontWeight: 700,
+      margin: "0 0 4px",
+      color: C.deep
+    }
+  }, "Prelone (à parte)"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: "0 0 10px",
+      fontSize: 13,
+      color: C.mid,
+      lineHeight: 1.6
+    }
+  }, "1 comprimido por dia, por 3 dias. Só começa depois do exame de sangue, por isso fica fora da grade. Marque as 3 doses quando começar."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 8
+    }
+  }, [0, 1, 2].map(function (i) {
+    const on = !!prel[i];
+    return /*#__PURE__*/React.createElement("button", {
+      key: i,
+      onClick: function () {
+        togglePrel(i);
+      },
+      style: {
+        flex: 1,
+        border: "1px solid " + (on ? C.strong : C.line),
+        background: on ? C.done : C.surface,
+        color: on ? "#fff" : C.deep,
+        borderRadius: 10,
+        padding: "11px",
+        fontSize: 13.5,
+        fontWeight: 600,
+        cursor: "pointer",
+        fontFamily: "inherit"
+      }
+    }, on ? "✓ " : "", "Dose ", i + 1);
+  }))));
+}
+
 /* ---------- Seção médica (container com sub-abas) ---------- */
 const MED_ABAS = [{
   id: "caes",
@@ -3813,6 +4118,9 @@ const MED_ABAS = [{
 }, {
   id: "tratamentos",
   nome: "Tratamentos"
+}, {
+  id: "calendario",
+  nome: "Calendário"
 }, {
   id: "rotina",
   nome: "Rotina"
@@ -3828,6 +4136,7 @@ const MED_TITULOS = {
   clinicas: "Clínicas e preços",
   vacinas: "Calendário de vacinação",
   tratamentos: "Tratamentos",
+  calendario: "Calendário de remédios do Joey",
   rotina: "Rotina de remédios",
   contas: "Contas e pendências",
   avisos: "Alertas e recomendações"
@@ -3862,7 +4171,7 @@ function SecaoMedica() {
     editando: editando,
     hoje: hoje
   };
-  const edicaoDisponivel = aba !== null;
+  const edicaoDisponivel = aba !== "calendario";
   return /*#__PURE__*/React.createElement("div", {
     style: {
       maxWidth: 680,
@@ -3919,7 +4228,7 @@ function SecaoMedica() {
     onClick: function () {
       setEditando(!editando);
     }
-  })), aba === "caes" && /*#__PURE__*/React.createElement(TelaCaes, props), aba === "clinicas" && /*#__PURE__*/React.createElement(TelaClinicas, props), aba === "vacinas" && /*#__PURE__*/React.createElement(TelaVacinas, props), aba === "tratamentos" && /*#__PURE__*/React.createElement(TelaTratamentos, props), aba === "rotina" && /*#__PURE__*/React.createElement(TelaRotina, props), aba === "contas" && /*#__PURE__*/React.createElement(TelaContas, props), aba === "avisos" && /*#__PURE__*/React.createElement(TelaAvisos, props));
+  })), aba === "caes" && /*#__PURE__*/React.createElement(TelaCaes, props), aba === "clinicas" && /*#__PURE__*/React.createElement(TelaClinicas, props), aba === "vacinas" && /*#__PURE__*/React.createElement(TelaVacinas, props), aba === "tratamentos" && /*#__PURE__*/React.createElement(TelaTratamentos, props), aba === "calendario" && /*#__PURE__*/React.createElement(TelaCalendarioJoey, props), aba === "rotina" && /*#__PURE__*/React.createElement(TelaRotina, props), aba === "contas" && /*#__PURE__*/React.createElement(TelaContas, props), aba === "avisos" && /*#__PURE__*/React.createElement(TelaAvisos, props));
 }
 
 /* ---------- App: seletor de seção Passeios / Médico ---------- */

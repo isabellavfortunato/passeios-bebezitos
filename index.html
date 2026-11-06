@@ -2020,12 +2020,93 @@ const setaEstilo = {
 /* Dados semeados do documento de continuidade veterinária.
    Tudo editável e espelhado no Firestore (doc medico/dados). */
 
+const TRAT_JOEY = {
+  id: "joey-respiratorio",
+  cao: "Joey",
+  titulo: "Tratamento respiratório do Joey",
+  receita: "Receita de 06/11/2026, Dr. Felipe Cascudo Rodrigues (pneumologista, CittàVet, CRMV RJ 14581). Retorno em 14 dias. Contato (21) 99581-2329.",
+  regra: "O Prelone só começa após o exame de sangue.",
+  meds: [{
+    m: "Acetilcisteína 40 mg/ml",
+    dose: "2,5 ml",
+    freq: "a cada 12 horas (12/12h)",
+    dur: "14 dias",
+    preco: 0,
+    ativo: true
+  }, {
+    m: "Aminofilina 100 mg",
+    dose: "½ comprimido",
+    freq: "a cada 12 horas (12/12h)",
+    dur: "30 dias",
+    preco: 0,
+    ativo: true
+  }, {
+    m: "Doxifin 50 mg",
+    dose: "1 comprimido",
+    freq: "a cada 12 horas (12/12h), junto ou após a alimentação",
+    dur: "14 dias",
+    preco: 0,
+    ativo: true
+  }, {
+    m: "Prelone 5 mg",
+    dose: "1 comprimido",
+    freq: "a cada 24 horas (24h)",
+    dur: "3 dias, começar após o exame de sangue",
+    preco: 0,
+    ativo: true
+  }, {
+    m: "Flixotide 250 mcg (inalatório)",
+    dose: "com espaçador infantil, borrifar 1x e segurar a máscara no focinho por 30 segundos",
+    freq: "a cada 12 horas (12/12h)",
+    dur: "30 dias",
+    preco: 0,
+    ativo: true
+  }],
+  obs: "Contexto da consulta de 06/11/2026: nas caminhadas o Joey está mais devagar e cansado, com uma leve crepitação no fim da expiração. O veterinário investiga fibrose pulmonar ou causa cardíaca e pediu radiografia de tórax, como triagem, e exame de sangue em jejum, para ver infecção, pneumonia ou indícios de doença endócrina. A tosse não chamou atenção no exame. Atenção ao sobrepeso, que acumula gordura no tórax e no pescoço e dificulta a expansão do tórax: cortar a banana e os petiscos calóricos e ajustar a ração. Há um carocinho mole na região, possível nódulo de gordura, para observar, e o Joey está mancando."
+};
+const ROTINA_JOEY = [{
+  id: "jr1",
+  periodo: "Manhã",
+  item: "Joey — Acetilcisteína 40 mg/ml, 2,5 ml"
+}, {
+  id: "jr2",
+  periodo: "Manhã",
+  item: "Joey — Aminofilina 100 mg, ½ comprimido"
+}, {
+  id: "jr3",
+  periodo: "Manhã",
+  item: "Joey — Doxifin 50 mg, 1 comprimido (junto da comida)"
+}, {
+  id: "jr4",
+  periodo: "Manhã",
+  item: "Joey — Flixotide 250 mcg no espaçador, 30 segundos"
+}, {
+  id: "jr5",
+  periodo: "Noite",
+  item: "Joey — Acetilcisteína 40 mg/ml, 2,5 ml"
+}, {
+  id: "jr6",
+  periodo: "Noite",
+  item: "Joey — Aminofilina 100 mg, ½ comprimido"
+}, {
+  id: "jr7",
+  periodo: "Noite",
+  item: "Joey — Doxifin 50 mg, 1 comprimido (junto da comida)"
+}, {
+  id: "jr8",
+  periodo: "Noite",
+  item: "Joey — Flixotide 250 mcg no espaçador, 30 segundos"
+}, {
+  id: "jr9",
+  periodo: "Tarde",
+  item: "Joey — Prelone 5 mg, 1 comprimido (só após o exame de sangue)"
+}];
 const MED_SEED = {
   caes: [{
     id: "joey",
     nome: "Joey",
     nascimento: "2014-03-14",
-    peso: 8.4,
+    peso: 8.3,
     sexo: "Macho",
     castrado: true
   }, {
@@ -2067,7 +2148,7 @@ const MED_SEED = {
     id: "raj",
     nome: "Raj",
     nascimento: "2024-09-21",
-    peso: 5.2,
+    peso: 5.3,
     sexo: "Macho",
     castrado: true
   }],
@@ -2423,8 +2504,13 @@ const MED_SEED = {
   },
   pendencias: [{
     id: "p1",
-    texto: "Joey — consulta com pneumologista (Dr. Felipe Cascudo) e raio X de tórax na CittàVet. Foi desmarcado por compromisso pessoal, precisa remarcar.",
-    valor: 640,
+    texto: "Joey — consulta com o pneumologista (Dr. Felipe Cascudo) na CittàVet, realizada em 06/11/2026.",
+    valor: 350,
+    feito: true
+  }, {
+    id: "p2-joey-exames",
+    texto: "Joey — fazer a radiografia de tórax e o exame de sangue em jejum solicitados na consulta de 06/11/2026.",
+    valor: 540,
     feito: false
   }],
   alertas: [{
@@ -2433,6 +2519,10 @@ const MED_SEED = {
   }],
   recomendacoes: ["Limpar a casa com Lysoform suave bem diluído e detergente neutro.", "Lavar tecidos de contato com sabão de coco líquido ou Omo Hipoalergênico.", "Não oferecer queijos, embutidos nem petiscos com corantes e aromatizantes artificiais.", "Prevenção de ectoparasitas: Bravecto a cada 3 meses e coleira Scalibor para leishmaniose."]
 };
+
+// Inclui, na semente, o tratamento e a rotina do Joey (também aplicados por migração ao dado já salvo).
+MED_SEED.tratamentos.unshift(TRAT_JOEY);
+MED_SEED.rotina = MED_SEED.rotina.concat(ROTINA_JOEY);
 function fmtBRL(n) {
   const v = Number(n) || 0;
   return "R$ " + v.toLocaleString("pt-BR", {
@@ -2509,6 +2599,47 @@ function salvarMedico(obj) {
       _medDb.collection("medico").doc("dados").set(obj);
     } catch (e) {}
   }
+}
+/* Migração única: acrescenta ao dado já sincronizado as novidades de 06/11/2026
+   (tratamento respiratório do Joey, rotina do Joey, pesos atualizados, consulta feita),
+   sem apagar nada que a Isabella já tenha editado. Roda uma vez por documento. */
+function migrarMedico(obj) {
+  if (!obj || typeof obj !== "object") return false;
+  if (!obj._migr) obj._migr = {};
+  if (obj._migr.joey_resp_20261106) return false;
+  (obj.caes || []).forEach(function (c) {
+    if (c.id === "joey") c.peso = 8.3;
+    if (c.id === "raj") c.peso = 5.3;
+  });
+  obj.tratamentos = obj.tratamentos || [];
+  if (!obj.tratamentos.some(function (t) {
+    return t.id === "joey-respiratorio";
+  })) obj.tratamentos.unshift(clonar(TRAT_JOEY));
+  obj.pendencias = obj.pendencias || [];
+  const p1 = obj.pendencias.find(function (p) {
+    return p.id === "p1";
+  });
+  if (p1) {
+    p1.feito = true;
+    p1.texto = "Joey — consulta com o pneumologista (Dr. Felipe Cascudo) na CittàVet, realizada em 06/11/2026.";
+    p1.valor = 350;
+  }
+  if (!obj.pendencias.some(function (p) {
+    return p.id === "p2-joey-exames";
+  })) obj.pendencias.push({
+    id: "p2-joey-exames",
+    texto: "Joey — fazer a radiografia de tórax e o exame de sangue em jejum solicitados na consulta de 06/11/2026.",
+    valor: 540,
+    feito: false
+  });
+  obj.rotina = obj.rotina || [];
+  ROTINA_JOEY.forEach(function (r) {
+    if (!obj.rotina.some(function (x) {
+      return x.id === r.id;
+    })) obj.rotina.push(clonar(r));
+  });
+  obj._migr.joey_resp_20261106 = true;
+  return true;
 }
 
 /* ---------- Primitivos de edição ---------- */
@@ -3708,9 +3839,15 @@ function SecaoMedica() {
   const hoje = todayStr();
   useEffect(function () {
     _medOnData = function (novo) {
+      const mudou = migrarMedico(novo);
+      if (mudou) salvarMedico(novo);
       setMed(novo);
     };
     ativarSyncMedico(0);
+    const inicial = carregarMedicoLocal();
+    const mudou = migrarMedico(inicial);
+    setMed(inicial);
+    if (mudou) salvarMedico(inicial);
     return function () {
       _medOnData = null;
     };

@@ -2014,7 +2014,1843 @@ const setaEstilo = {
   lineHeight: 1,
   cursor: "pointer"
 };
+
+/* ===================== CÓDIGO DA SEÇÃO MÉDICA (injetado) ===================== */
+/* ===================== SEÇÃO MÉDICA ===================== */
+/* Dados semeados do documento de continuidade veterinária.
+   Tudo editável e espelhado no Firestore (doc medico/dados). */
+
+const MED_SEED = {
+  caes: [{
+    id: "joey",
+    nome: "Joey",
+    nascimento: "2014-03-14",
+    peso: 8.4,
+    sexo: "Macho",
+    castrado: true
+  }, {
+    id: "amy",
+    nome: "Amy",
+    nascimento: "2014-03-12",
+    peso: 6.7,
+    sexo: "Fêmea",
+    castrado: true
+  }, {
+    id: "fujao",
+    nome: "Fujão",
+    nascimento: "2015-05-05",
+    peso: 6.1,
+    sexo: "Macho",
+    castrado: true
+  }, {
+    id: "sheldon",
+    nome: "Sheldon",
+    nascimento: "2019-01-19",
+    peso: 7.7,
+    sexo: "Macho",
+    castrado: true
+  }, {
+    id: "lorelai",
+    nome: "Lorelai",
+    nascimento: "2020-05-25",
+    peso: 7.3,
+    sexo: "Fêmea",
+    castrado: false
+  }, {
+    id: "peralta",
+    nome: "Peralta",
+    nascimento: "2022-04-30",
+    peso: 6.9,
+    sexo: "Macho",
+    castrado: true
+  }, {
+    id: "raj",
+    nome: "Raj",
+    nascimento: "2024-09-21",
+    peso: 5.2,
+    sexo: "Macho",
+    castrado: true
+  }],
+  clinicas: [{
+    nome: "CittàVet",
+    info: "Hospital Veterinário Città. Av. General Guedes da Fontoura, 747, Barra da Tijuca. Atendimento 24 horas para emergência. Unidades no Jardim Oceânico, Barra Shopping e Américas. Fixo (21) 2494-3427. WhatsApp internação (21) 99810-8519. Profissionais: Dra. Juliana Dias Martins (dermatologista), MV Gustavo (ortopedista, (21) 97513-2538), Dr. Felipe Cascudo (pneumologista). A ultra funciona de segunda a sábado, das 9h às 16h30, laudo em 48 a 72 horas, com parecer na hora. Só vacinar, sem consulta, cobra apenas a vacina.",
+    servicos: [{
+      s: "Consulta clínica geral",
+      v: 180
+    }, {
+      s: "Consulta dermatológica",
+      v: 350
+    }, {
+      s: "Consulta gastroenterológica",
+      v: 350
+    }, {
+      s: "Consulta pneumologista",
+      v: 350
+    }, {
+      s: "Citologia dermato",
+      v: 100
+    }, {
+      s: "Exame de sangue",
+      v: 250
+    }, {
+      s: "Ultrassom",
+      v: 270
+    }, {
+      s: "Raio X de tórax",
+      v: 290
+    }, {
+      s: "Avaliação cardiológica (idosos)",
+      v: 400
+    }, {
+      s: "Eco pré-operatório",
+      v: 400
+    }, {
+      s: "Vacina Raiva",
+      v: 90
+    }, {
+      s: "Vacina V10",
+      v: 125
+    }, {
+      s: "Vacina Gripe",
+      v: 140
+    }, {
+      s: "Vacina Giardia",
+      v: 125
+    }, {
+      s: "Pro Heart",
+      v: 355
+    }, {
+      s: "Castração (fêmea)",
+      v: 1100
+    }, {
+      s: "Anestesia (castração)",
+      v: 750
+    }, {
+      s: "Exame de sangue (pré-cirúrgico)",
+      v: 218
+    }, {
+      s: "Bravecto 4,5 a 10 kg",
+      v: 211
+    }]
+  }, {
+    nome: "Veterinária Alessandra (a domicílio)",
+    info: "Atende a domicílio, vem de barca até a ilha. Cobra R$ 60,00 de deslocamento fixo por visita, independentemente do número de cães. Consulta R$ 140,00 por cachorro.",
+    servicos: [{
+      s: "Consulta (por cachorro)",
+      v: 140
+    }, {
+      s: "Deslocamento (por visita)",
+      v: 60
+    }, {
+      s: "Vacina V10",
+      v: 110
+    }, {
+      s: "Vacina Gripe",
+      v: 150
+    }, {
+      s: "Vacina Raiva",
+      v: 95
+    }, {
+      s: "Pro Heart",
+      v: 330
+    }, {
+      s: "Eletrocardiograma",
+      v: 380
+    }, {
+      s: "Ultrassom",
+      v: 250
+    }, {
+      s: "Check-up (por cachorro)",
+      v: 420
+    }, {
+      s: "Check-up total (7 cães)",
+      v: 3000
+    }, {
+      s: "Castração (fêmea, com anestesia e hemograma)",
+      v: 1870
+    }]
+  }, {
+    nome: "Animália",
+    info: "O check-up de R$ 223,00 não inclui consulta. Com consulta, o total fica R$ 490,00 por cão, o mais caro das 3 clínicas.",
+    servicos: [{
+      s: "Consulta",
+      v: 267
+    }, {
+      s: "Ecocardiograma",
+      v: 523
+    }, {
+      s: "Raio X",
+      v: 344
+    }, {
+      s: "Ultrassom",
+      v: 315
+    }, {
+      s: "Check-up (sem consulta)",
+      v: 223
+    }, {
+      s: "Vacina Anti-Rábica",
+      v: 106
+    }, {
+      s: "Vacina V10",
+      v: 149
+    }, {
+      s: "Vacina Bordetella (injetável)",
+      v: 149
+    }, {
+      s: "Vacina Bordetella (oral)",
+      v: 189
+    }, {
+      s: "Vacina Giárdia",
+      v: 149
+    }, {
+      s: "Pro Heart",
+      v: 370
+    }]
+  }],
+  // Pro Heart a R$ 18 por quilo. O valor por cão é calculado do peso atual.
+  proHeartPorKg: 18,
+  // Calendário de vacinação: mês de cada vacina por cão e o ano da última aplicada.
+  vacinas: {
+    peralta: {
+      v10: "março",
+      raiva: "março",
+      gripe: "abril",
+      proheart: "março",
+      tomadas: {}
+    },
+    lorelai: {
+      v10: "março",
+      raiva: "março",
+      gripe: "março",
+      proheart: "março",
+      tomadas: {}
+    },
+    sheldon: {
+      v10: "abril",
+      raiva: "abril",
+      gripe: "abril",
+      proheart: "novembro",
+      tomadas: {}
+    },
+    amy: {
+      v10: "abril",
+      raiva: "abril",
+      gripe: "abril",
+      proheart: "novembro",
+      tomadas: {}
+    },
+    joey: {
+      v10: "abril",
+      raiva: "abril",
+      gripe: "abril",
+      proheart: "novembro",
+      tomadas: {}
+    },
+    fujao: {
+      v10: "abril",
+      raiva: "abril",
+      gripe: "abril",
+      proheart: "novembro",
+      tomadas: {}
+    },
+    raj: {
+      v10: "janeiro",
+      raiva: "janeiro",
+      gripe: "janeiro",
+      proheart: "novembro",
+      tomadas: {}
+    }
+  },
+  vacinaNomes: "Vanguard Plus (V10), Canigen R (Raiva), Vanguard B Oral (Gripe/Bordetella) e Pro Heart SR-12 (verme do coração). Todas anuais. A Bordetella também é chamada de gripe canina.",
+  tratamentos: [{
+    id: "fujao-derm",
+    cao: "Fujão",
+    titulo: "Tratamento dermatológico do Fujão",
+    receita: "Receita de 14/04/2026, Dra. Juliana Dias Martins (dermatologista, CittàVet). Retorno em 06/05/2026 às 10:30.",
+    regra: "Prednom e Apoquel não podem ser dados ao mesmo tempo. O Apoquel só começa quando o Prednom terminar.",
+    meds: [{
+      m: "Prednom (prednisolona 4 mg/ml)",
+      dose: "0,8 ml",
+      freq: "1x ao dia",
+      dur: "10 dias e suspender",
+      preco: 51,
+      ativo: false
+    }, {
+      m: "Apoquel 5.4 (fase 1)",
+      dose: "½ comprimido",
+      freq: "2x ao dia (12/12h)",
+      dur: "14 dias",
+      preco: 213,
+      ativo: true
+    }, {
+      m: "Apoquel 5.4 (fase 2, manutenção)",
+      dose: "½ comprimido",
+      freq: "1x ao dia (24h)",
+      dur: "até nova recomendação",
+      preco: 0,
+      ativo: true
+    }, {
+      m: "Ograx Derme 10",
+      dose: "1 cápsula",
+      freq: "1x ao dia",
+      dur: "uso contínuo",
+      preco: 122,
+      ativo: true
+    }, {
+      m: "Beneflora Derme",
+      dose: "1 grama",
+      freq: "1x ao dia",
+      dur: "60 dias",
+      preco: 189,
+      ativo: true
+    }, {
+      m: "Surosolve (limpeza de orelha)",
+      dose: "preencher os 2 condutos",
+      freq: "2x ao dia",
+      dur: "21 dias",
+      preco: 96,
+      ativo: true
+    }, {
+      m: "Otocalm (tratamento de orelha)",
+      dose: "6 gotas cada orelha",
+      freq: "2x ao dia (após Surosolve)",
+      dur: "21 dias e reavaliar",
+      preco: 129,
+      ativo: true
+    }, {
+      m: "Spray manipulado (clorexidina 3%, miconazol 2%, hidrocortisona 0,06%, hidroviton 3%)",
+      dose: "aplicar nas lesões",
+      freq: "2x ao dia",
+      dur: "até o retorno",
+      preco: 0,
+      ativo: true
+    }, {
+      m: "Cloresten Shampoo",
+      dose: "aplicar no banho",
+      freq: "1x por semana",
+      dur: "até o retorno",
+      preco: 196,
+      ativo: true
+    }, {
+      m: "Hidrapet Creme",
+      dose: "todo o corpo, pelos úmidos",
+      freq: "1x por semana (após banho)",
+      dur: "até o retorno",
+      preco: 289,
+      ativo: true
+    }, {
+      m: "Mectimax (ivermectina)",
+      dose: "conforme orientação",
+      freq: "conforme orientação",
+      dur: "antiparasitário de amplo espectro",
+      preco: 0,
+      ativo: true
+    }, {
+      m: "Neem Pet (spray repelente natural)",
+      dose: "aplicar",
+      freq: "conforme orientação",
+      dur: "repelente natural",
+      preco: 0,
+      ativo: true
+    }],
+    obs: "Total dos medicamentos (sem spray manipulado): R$ 1.285,00. Os 7 cães também tomam Bravecto a cada 6 meses, a partir de aproximadamente 25 de junho. Recomendações gerais: limpar a casa com Lysoform suave bem diluído e detergente neutro, lavar tecidos de contato com sabão de coco líquido ou Omo Hipoalergênico, não oferecer queijos, embutidos nem petiscos com corantes e aromatizantes artificiais. Coleira Scalibor para prevenção de leishmaniose."
+  }, {
+    id: "peralta-lombar",
+    cao: "Peralta",
+    titulo: "Tratamento lombar do Peralta",
+    receita: "Receita de 18/04/2026, MV Gustavo (ortopedista, CittàVet). Diagnóstico de desconforto em coluna lombar. Radiografia mostrou estreitamento do espaço discal L2 a L3.",
+    regra: "O Prednom começou em 19/04 (sábado), à tarde, sempre junto ou após a alimentação.",
+    meds: [{
+      m: "Dipirona gotas",
+      dose: "7 gotas",
+      freq: "2x ao dia (12/12h)",
+      dur: "7 dias",
+      preco: 0,
+      ativo: false
+    }, {
+      m: "Cronidor 12 mg (tramadol)",
+      dose: "1 comprimido",
+      freq: "2x ao dia (12/12h)",
+      dur: "7 dias",
+      preco: 0,
+      ativo: false
+    }, {
+      m: "Prednom 4 mg/ml",
+      dose: "0,9 ml",
+      freq: "1x ao dia (à tarde)",
+      dur: "5 dias",
+      preco: 0,
+      ativo: false
+    }],
+    obs: "Orientações: buscar o resultado da radiografia em até 72 horas, agendar fisioterapia e reabilitação na recepção da CittàVet, manter repouso e fazer compressas mornas na região lombar."
+  }],
+  // Rotina diária de remédios: itens por período, com o dia marcado embaixo.
+  rotina: [{
+    id: "r1",
+    periodo: "Manhã",
+    item: "Fujão — Apoquel 5.4, ½ comprimido"
+  }, {
+    id: "r2",
+    periodo: "Manhã",
+    item: "Fujão — Ograx Derme 10, 1 cápsula"
+  }, {
+    id: "r3",
+    periodo: "Manhã",
+    item: "Fujão — Beneflora Derme, 1 grama"
+  }, {
+    id: "r4",
+    periodo: "Manhã",
+    item: "Fujão — Surosolve nas 2 orelhas, depois Otocalm 6 gotas"
+  }, {
+    id: "r5",
+    periodo: "Noite",
+    item: "Fujão — Apoquel 5.4, ½ comprimido (se fase 1)"
+  }, {
+    id: "r6",
+    periodo: "Noite",
+    item: "Fujão — Surosolve nas 2 orelhas, depois Otocalm 6 gotas"
+  }, {
+    id: "r7",
+    periodo: "Semana",
+    item: "Fujão — banho com Cloresten Shampoo e Hidrapet Creme depois"
+  }],
+  rotinaCheck: {},
+  // { "AAAA-MM-DD": { r1: true, ... } }
+  dividas: {
+    titulo: "Vacinação com a Alessandra",
+    total: 2943,
+    pago: 1500
+  },
+  pendencias: [{
+    id: "p1",
+    texto: "Joey — consulta com pneumologista (Dr. Felipe Cascudo) e raio X de tórax na CittàVet. Foi desmarcado por compromisso pessoal, precisa remarcar.",
+    valor: 640,
+    feito: false
+  }],
+  alertas: [{
+    id: "a1",
+    texto: "Raj (5,2 kg) recebeu 1 mg de Flamavet (meloxicam) por corrimento no pênis. A dose recomendada de meloxicam é 0,1 mg/kg, cerca de 0,5 mg para o Raj. A dose de 1 mg é o dobro do recomendado."
+  }],
+  recomendacoes: ["Limpar a casa com Lysoform suave bem diluído e detergente neutro.", "Lavar tecidos de contato com sabão de coco líquido ou Omo Hipoalergênico.", "Não oferecer queijos, embutidos nem petiscos com corantes e aromatizantes artificiais.", "Prevenção de ectoparasitas: Bravecto a cada 3 meses e coleira Scalibor para leishmaniose."]
+};
+function fmtBRL(n) {
+  const v = Number(n) || 0;
+  return "R$ " + v.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+function idadeAnos(nasc) {
+  const d = new Date(nasc + "T12:00:00");
+  if (isNaN(d)) return "";
+  const h = new Date();
+  let a = h.getFullYear() - d.getFullYear();
+  const m = h.getMonth() - d.getMonth();
+  if (m < 0 || m === 0 && h.getDate() < d.getDate()) a--;
+  return a;
+}
+function dataBR(iso) {
+  if (!iso) return "";
+  const p = iso.split("-");
+  return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : iso;
+}
+
+/* ---------- Sincronização da seção médica (um documento no Firestore) ---------- */
+let _medReady = false;
+let _medDb = null;
+let _medOnData = null;
+function clonar(o) {
+  return JSON.parse(JSON.stringify(o));
+}
+function mesclarSeed(dados) {
+  // garante que novas chaves do seed existam em dados vindos antigos
+  const base = clonar(MED_SEED);
+  if (!dados || typeof dados !== "object") return base;
+  return Object.assign(base, dados);
+}
+function carregarMedicoLocal() {
+  try {
+    const raw = localStorage.getItem("medico:dados");
+    if (raw) return mesclarSeed(JSON.parse(raw));
+  } catch (e) {}
+  return clonar(MED_SEED);
+}
+function ativarSyncMedico(tentativa) {
+  if (_medReady) return;
+  if (typeof firebase === "undefined" || !firebase.firestore) {
+    if ((tentativa || 0) < 40) setTimeout(function () {
+      ativarSyncMedico((tentativa || 0) + 1);
+    }, 250);
+    return;
+  }
+  try {
+    if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    _medDb = firebase.firestore();
+    _medReady = true;
+    _medDb.collection("medico").doc("dados").onSnapshot(function (snap) {
+      if (!snap.exists) return;
+      const data = snap.data();
+      try {
+        const novo = JSON.stringify(mesclarSeed(data));
+        if (localStorage.getItem("medico:dados") !== novo) {
+          localStorage.setItem("medico:dados", novo);
+          if (_medOnData) _medOnData(JSON.parse(novo));
+        }
+      } catch (e) {}
+    }, function () {});
+  } catch (e) {}
+}
+function salvarMedico(obj) {
+  try {
+    localStorage.setItem("medico:dados", JSON.stringify(obj));
+  } catch (e) {}
+  if (_medReady && _medDb) {
+    try {
+      _medDb.collection("medico").doc("dados").set(obj);
+    } catch (e) {}
+  }
+}
+
+/* ---------- Primitivos de edição ---------- */
+function Campo(props) {
+  // input de texto ou número com visual do app
+  return React.createElement("input", {
+    value: props.value == null ? "" : props.value,
+    type: props.tipo || "text",
+    inputMode: props.tipo === "number" ? "decimal" : undefined,
+    step: props.step,
+    placeholder: props.placeholder || "",
+    onChange: function (e) {
+      props.onChange(props.tipo === "number" ? e.target.value : e.target.value);
+    },
+    style: Object.assign({
+      width: "100%",
+      boxSizing: "border-box",
+      border: "1px solid " + C.line,
+      borderRadius: 9,
+      padding: "8px 10px",
+      fontSize: 14.5,
+      color: C.deep,
+      background: C.surface,
+      fontFamily: "inherit"
+    }, props.style || {})
+  });
+}
+function AreaTexto(props) {
+  return React.createElement("textarea", {
+    value: props.value || "",
+    onChange: function (e) {
+      props.onChange(e.target.value);
+    },
+    rows: props.rows || 3,
+    style: {
+      width: "100%",
+      boxSizing: "border-box",
+      border: "1px solid " + C.line,
+      borderRadius: 9,
+      padding: "8px 10px",
+      fontSize: 14,
+      color: C.deep,
+      background: C.surface,
+      fontFamily: "inherit",
+      lineHeight: 1.5,
+      resize: "vertical"
+    }
+  });
+}
+function BotaoEditar(props) {
+  return React.createElement("button", {
+    onClick: props.onClick,
+    style: {
+      background: props.ativo ? C.strong : C.surface,
+      color: props.ativo ? "#fff" : C.strong,
+      border: "1px solid " + (props.ativo ? C.strong : C.line),
+      borderRadius: 9,
+      padding: "7px 14px",
+      fontSize: 13.5,
+      fontWeight: 600,
+      cursor: "pointer",
+      fontFamily: "inherit"
+    }
+  }, props.ativo ? "Concluir edição" : "Editar");
+}
+
+/* ---------- Telas da seção médica ---------- */
+const mesesLista = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+const anoAtual = new Date().getFullYear();
+function Cartao({
+  children,
+  estilo
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    style: Object.assign({
+      background: C.surface,
+      border: "1px solid " + C.line,
+      borderRadius: 16,
+      padding: "16px 14px",
+      marginBottom: 14
+    }, estilo || {})
+  }, children);
+}
+function TelaCaes({
+  med,
+  onMed,
+  editando
+}) {
+  function set(i, campo, val) {
+    const n = clonar(med);
+    if (campo === "peso") n.caes[i][campo] = parseFloat(String(val).replace(",", ".")) || 0;else if (campo === "castrado") n.caes[i][campo] = val;else n.caes[i][campo] = val;
+    onMed(n);
+  }
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: "0 0 14px",
+      fontSize: 13.5,
+      color: C.mid
+    }
+  }, "7 Shih Tzus, moradores do Itanhangá, Rio de Janeiro. A idade é calculada da data de nascimento."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fill,minmax(230px,1fr))",
+      gap: 12
+    }
+  }, med.caes.map((c, i) => /*#__PURE__*/React.createElement("div", {
+    key: c.id,
+    style: {
+      background: C.surface,
+      border: "1px solid " + C.line,
+      borderRadius: 14,
+      padding: "14px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      marginBottom: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: 36,
+      height: 36,
+      flexShrink: 0,
+      borderRadius: "50%",
+      background: C.done,
+      color: "#fff",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontFamily: "Georgia, serif",
+      fontWeight: 700,
+      fontSize: 16
+    }
+  }, c.nome.charAt(0)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "Georgia, serif",
+      fontSize: 18,
+      fontWeight: 700,
+      color: C.deep
+    }
+  }, c.nome), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: C.mid
+    }
+  }, idadeAnos(c.nascimento), " anos"))), editando ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 7
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    style: lab
+  }, "Nome", /*#__PURE__*/React.createElement(Campo, {
+    value: c.nome,
+    onChange: v => set(i, "nome", v)
+  })), /*#__PURE__*/React.createElement("label", {
+    style: lab
+  }, "Nascimento", /*#__PURE__*/React.createElement(Campo, {
+    tipo: "date",
+    value: c.nascimento,
+    onChange: v => set(i, "nascimento", v)
+  })), /*#__PURE__*/React.createElement("label", {
+    style: lab
+  }, "Peso (kg)", /*#__PURE__*/React.createElement(Campo, {
+    tipo: "number",
+    step: "0.1",
+    value: c.peso,
+    onChange: v => set(i, "peso", v)
+  })), /*#__PURE__*/React.createElement("label", {
+    style: lab
+  }, "Sexo", /*#__PURE__*/React.createElement(Campo, {
+    value: c.sexo,
+    onChange: v => set(i, "sexo", v)
+  })), /*#__PURE__*/React.createElement("label", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 8,
+      fontSize: 13.5,
+      color: C.deep,
+      marginTop: 2
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    checked: !!c.castrado,
+    onChange: e => set(i, "castrado", e.target.checked)
+  }), "Castrado")) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13.5,
+      color: C.deep,
+      lineHeight: 1.7
+    }
+  }, /*#__PURE__*/React.createElement("div", null, "Nascimento: ", dataBR(c.nascimento)), /*#__PURE__*/React.createElement("div", null, "Peso: ", String(c.peso).replace(".", ","), " kg"), /*#__PURE__*/React.createElement("div", null, "Sexo: ", c.sexo), /*#__PURE__*/React.createElement("div", null, "Castrado: ", c.castrado ? "sim" : "não"))))));
+}
+function TabelaPrecos({
+  clinica,
+  ci,
+  med,
+  onMed,
+  editando
+}) {
+  function setServ(si, campo, val) {
+    const n = clonar(med);
+    if (campo === "v") n.clinicas[ci].servicos[si].v = parseFloat(String(val).replace(",", ".")) || 0;else n.clinicas[ci].servicos[si].s = val;
+    onMed(n);
+  }
+  function remover(si) {
+    const n = clonar(med);
+    n.clinicas[ci].servicos.splice(si, 1);
+    onMed(n);
+  }
+  function adicionar() {
+    const n = clonar(med);
+    n.clinicas[ci].servicos.push({
+      s: "Novo serviço",
+      v: 0
+    });
+    onMed(n);
+  }
+  function setInfo(val) {
+    const n = clonar(med);
+    n.clinicas[ci].info = val;
+    onMed(n);
+  }
+  return /*#__PURE__*/React.createElement(Cartao, null, /*#__PURE__*/React.createElement("h3", {
+    style: {
+      fontFamily: "Georgia, serif",
+      fontSize: 19,
+      fontWeight: 700,
+      margin: "0 0 8px",
+      color: C.deep
+    }
+  }, clinica.nome), editando ? /*#__PURE__*/React.createElement(AreaTexto, {
+    value: clinica.info,
+    onChange: setInfo,
+    rows: 4
+  }) : /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: "0 0 12px",
+      fontSize: 13,
+      color: C.mid,
+      lineHeight: 1.6
+    }
+  }, clinica.info), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 12
+    }
+  }, clinica.servicos.map((sv, si) => /*#__PURE__*/React.createElement("div", {
+    key: si,
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 8,
+      padding: "7px 0",
+      borderBottom: "1px solid " + C.surfaceAlt
+    }
+  }, editando ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Campo, {
+    value: sv.s,
+    onChange: v => setServ(si, "s", v),
+    style: {
+      flex: 1
+    }
+  }), /*#__PURE__*/React.createElement(Campo, {
+    tipo: "number",
+    step: "0.01",
+    value: sv.v,
+    onChange: v => setServ(si, "v", v),
+    style: {
+      width: 110
+    }
+  }), /*#__PURE__*/React.createElement("button", {
+    onClick: () => remover(si),
+    style: {
+      background: "none",
+      border: "none",
+      color: C.soft,
+      fontSize: 18,
+      cursor: "pointer",
+      lineHeight: 1
+    }
+  }, "×")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    style: {
+      flex: 1,
+      fontSize: 14,
+      color: C.deep
+    }
+  }, sv.s), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 14,
+      fontWeight: 600,
+      color: C.strong
+    }
+  }, fmtBRL(sv.v)))))), editando && /*#__PURE__*/React.createElement("button", {
+    onClick: adicionar,
+    style: {
+      marginTop: 10,
+      background: C.surfaceAlt,
+      border: "1px dashed " + C.line,
+      borderRadius: 9,
+      padding: "8px 12px",
+      fontSize: 13,
+      fontWeight: 600,
+      color: C.strong,
+      cursor: "pointer",
+      fontFamily: "inherit"
+    }
+  }, "+ Adicionar serviço"));
+}
+function TelaClinicas({
+  med,
+  onMed,
+  editando
+}) {
+  const proHeart = med.caes.map(c => ({
+    nome: c.nome,
+    valor: (Number(c.peso) || 0) * (med.proHeartPorKg || 18)
+  }));
+  const totalPH = proHeart.reduce((a, b) => a + b.valor, 0);
+  return /*#__PURE__*/React.createElement("div", null, med.clinicas.map((cl, ci) => /*#__PURE__*/React.createElement(TabelaPrecos, {
+    key: ci,
+    clinica: cl,
+    ci: ci,
+    med: med,
+    onMed: onMed,
+    editando: editando
+  })), /*#__PURE__*/React.createElement(Cartao, null, /*#__PURE__*/React.createElement("h3", {
+    style: {
+      fontFamily: "Georgia, serif",
+      fontSize: 19,
+      fontWeight: 700,
+      margin: "0 0 4px",
+      color: C.deep
+    }
+  }, "Pro Heart a R$ ", med.proHeartPorKg || 18, " por quilo"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: "0 0 12px",
+      fontSize: 13,
+      color: C.mid,
+      lineHeight: 1.6
+    }
+  }, "Veterinária que cobra por quilo. O valor de cada cão é calculado do peso atual do cadastro."), proHeart.map((p, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      padding: "6px 0",
+      borderBottom: "1px solid " + C.surfaceAlt,
+      fontSize: 14
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: C.deep
+    }
+  }, p.nome), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 600,
+      color: C.strong
+    }
+  }, fmtBRL(p.valor)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      paddingTop: 10,
+      fontSize: 14.5,
+      fontWeight: 700,
+      color: C.deep
+    }
+  }, /*#__PURE__*/React.createElement("span", null, "Total dos 7 cães"), /*#__PURE__*/React.createElement("span", null, fmtBRL(totalPH)))));
+}
+function TelaVacinas({
+  med,
+  onMed,
+  editando
+}) {
+  const vacs = [{
+    k: "v10",
+    n: "V10"
+  }, {
+    k: "raiva",
+    n: "Raiva"
+  }, {
+    k: "gripe",
+    n: "Gripe"
+  }, {
+    k: "proheart",
+    n: "Pro Heart"
+  }];
+  function setMes(dogId, k, val) {
+    const n = clonar(med);
+    n.vacinas[dogId][k] = val;
+    onMed(n);
+  }
+  function toggleTomada(dogId, k) {
+    const n = clonar(med);
+    const t = n.vacinas[dogId].tomadas || (n.vacinas[dogId].tomadas = {});
+    if (t[k] === anoAtual) delete t[k];else t[k] = anoAtual;
+    onMed(n);
+  }
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: "0 0 14px",
+      fontSize: 13,
+      color: C.mid,
+      lineHeight: 1.6
+    }
+  }, med.vacinaNomes), med.caes.map(c => {
+    const v = med.vacinas[c.id] || {};
+    const t = v.tomadas || {};
+    return /*#__PURE__*/React.createElement(Cartao, {
+      key: c.id,
+      estilo: {
+        padding: "13px 14px"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: "Georgia, serif",
+        fontSize: 17,
+        fontWeight: 700,
+        color: C.deep,
+        marginBottom: 8
+      }
+    }, c.nome), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit,minmax(120px,1fr))",
+        gap: 8
+      }
+    }, vacs.map(vc => {
+      const tomada = t[vc.k] === anoAtual;
+      return /*#__PURE__*/React.createElement("div", {
+        key: vc.k,
+        style: {
+          border: "1px solid " + (tomada ? C.strong : C.line),
+          background: tomada ? C.plan : C.surface,
+          borderRadius: 11,
+          padding: "9px 10px"
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          fontSize: 12,
+          fontWeight: 700,
+          color: C.mid,
+          letterSpacing: ".04em"
+        }
+      }, vc.n), editando ? /*#__PURE__*/React.createElement("select", {
+        value: v[vc.k] || "",
+        onChange: e => setMes(c.id, vc.k, e.target.value),
+        style: {
+          width: "100%",
+          marginTop: 4,
+          border: "1px solid " + C.line,
+          borderRadius: 7,
+          padding: "5px",
+          fontSize: 13,
+          fontFamily: "inherit",
+          background: C.surface,
+          color: C.deep
+        }
+      }, mesesLista.map(m => /*#__PURE__*/React.createElement("option", {
+        key: m,
+        value: m
+      }, m))) : /*#__PURE__*/React.createElement("div", {
+        style: {
+          fontSize: 14,
+          color: C.deep,
+          textTransform: "capitalize",
+          marginTop: 2
+        }
+      }, v[vc.k] || "—"), /*#__PURE__*/React.createElement("button", {
+        onClick: () => toggleTomada(c.id, vc.k),
+        style: {
+          marginTop: 7,
+          width: "100%",
+          border: "none",
+          borderRadius: 7,
+          padding: "6px",
+          fontSize: 12,
+          fontWeight: 600,
+          cursor: "pointer",
+          fontFamily: "inherit",
+          background: tomada ? C.done : C.surfaceAlt,
+          color: tomada ? "#fff" : C.strong
+        }
+      }, tomada ? "Tomada em " + anoAtual : "Marcar tomada"));
+    })));
+  }));
+}
+function TelaTratamentos({
+  med,
+  onMed,
+  editando
+}) {
+  function toggleMed(ti, mi) {
+    const n = clonar(med);
+    n.tratamentos[ti].meds[mi].ativo = !n.tratamentos[ti].meds[mi].ativo;
+    onMed(n);
+  }
+  function setMedCampo(ti, mi, campo, val) {
+    const n = clonar(med);
+    if (campo === "preco") n.tratamentos[ti].meds[mi].preco = parseFloat(String(val).replace(",", ".")) || 0;else n.tratamentos[ti].meds[mi][campo] = val;
+    onMed(n);
+  }
+  return /*#__PURE__*/React.createElement("div", null, med.tratamentos.map((tr, ti) => /*#__PURE__*/React.createElement(Cartao, {
+    key: tr.id
+  }, /*#__PURE__*/React.createElement("h3", {
+    style: {
+      fontFamily: "Georgia, serif",
+      fontSize: 19,
+      fontWeight: 700,
+      margin: "0 0 4px",
+      color: C.deep
+    }
+  }, tr.titulo), /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: "0 0 8px",
+      fontSize: 12.5,
+      color: C.mid,
+      lineHeight: 1.6
+    }
+  }, tr.receita), tr.regra && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: C.surfaceAlt,
+      border: "1px solid " + C.line,
+      borderLeft: "3px solid " + C.gold,
+      borderRadius: 8,
+      padding: "9px 11px",
+      fontSize: 13,
+      color: C.deep,
+      margin: "0 0 12px",
+      lineHeight: 1.5
+    }
+  }, /*#__PURE__*/React.createElement("strong", null, "Regra: "), tr.regra), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 8
+    }
+  }, tr.meds.map((md, mi) => /*#__PURE__*/React.createElement("div", {
+    key: mi,
+    style: {
+      border: "1px solid " + C.line,
+      borderRadius: 11,
+      padding: "10px 11px",
+      background: md.ativo ? C.surface : C.surfaceAlt,
+      opacity: md.ativo ? 1 : 0.72
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 14.5,
+      fontWeight: 600,
+      color: C.deep
+    }
+  }, md.m), /*#__PURE__*/React.createElement("button", {
+    onClick: () => toggleMed(ti, mi),
+    style: {
+      flexShrink: 0,
+      border: "1px solid " + (md.ativo ? C.strong : C.line),
+      background: md.ativo ? C.done : C.surface,
+      color: md.ativo ? "#fff" : C.soft,
+      borderRadius: 7,
+      padding: "4px 9px",
+      fontSize: 11.5,
+      fontWeight: 600,
+      cursor: "pointer",
+      fontFamily: "inherit"
+    }
+  }, md.ativo ? "Em uso" : "Suspenso")), editando ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: 6,
+      marginTop: 8
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    style: lab
+  }, "Dose", /*#__PURE__*/React.createElement(Campo, {
+    value: md.dose,
+    onChange: v => setMedCampo(ti, mi, "dose", v)
+  })), /*#__PURE__*/React.createElement("label", {
+    style: lab
+  }, "Frequência", /*#__PURE__*/React.createElement(Campo, {
+    value: md.freq,
+    onChange: v => setMedCampo(ti, mi, "freq", v)
+  })), /*#__PURE__*/React.createElement("label", {
+    style: lab
+  }, "Duração", /*#__PURE__*/React.createElement(Campo, {
+    value: md.dur,
+    onChange: v => setMedCampo(ti, mi, "dur", v)
+  })), /*#__PURE__*/React.createElement("label", {
+    style: lab
+  }, "Preço", /*#__PURE__*/React.createElement(Campo, {
+    tipo: "number",
+    step: "0.01",
+    value: md.preco,
+    onChange: v => setMedCampo(ti, mi, "preco", v)
+  }))) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      color: C.mid,
+      marginTop: 5,
+      lineHeight: 1.6
+    }
+  }, md.dose, " · ", md.freq, " · ", md.dur, md.preco ? " · " + fmtBRL(md.preco) : "")))), tr.obs && /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: "12px 0 0",
+      fontSize: 12.5,
+      color: C.mid,
+      lineHeight: 1.6
+    }
+  }, tr.obs))));
+}
+function TelaRotina({
+  med,
+  onMed,
+  editando,
+  hoje
+}) {
+  const checks = med.rotinaCheck && med.rotinaCheck[hoje] || {};
+  function toggle(id) {
+    const n = clonar(med);
+    if (!n.rotinaCheck) n.rotinaCheck = {};
+    const dia = Object.assign({}, n.rotinaCheck[hoje] || {});
+    if (dia[id]) delete dia[id];else dia[id] = true;
+    n.rotinaCheck[hoje] = dia;
+    // poda dias com mais de 45 dias para o documento não crescer sem limite
+    const limite = new Date();
+    limite.setDate(limite.getDate() - 45);
+    Object.keys(n.rotinaCheck).forEach(function (d) {
+      if (new Date(d + "T12:00:00") < limite) delete n.rotinaCheck[d];
+    });
+    onMed(n);
+  }
+  function setItem(i, campo, val) {
+    const n = clonar(med);
+    n.rotina[i][campo] = val;
+    onMed(n);
+  }
+  function remover(i) {
+    const n = clonar(med);
+    n.rotina.splice(i, 1);
+    onMed(n);
+  }
+  function adicionar() {
+    const n = clonar(med);
+    n.rotina.push({
+      id: "r" + Date.now(),
+      periodo: "Manhã",
+      item: "Novo item"
+    });
+    onMed(n);
+  }
+  const periodos = ["Manhã", "Tarde", "Noite", "Semana"];
+  const feitos = med.rotina.filter(r => checks[r.id]).length;
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: "0 0 12px",
+      fontSize: 13.5,
+      color: C.mid
+    }
+  }, "Marque o que já foi dado hoje. ", feitos, " de ", med.rotina.length, " feitos."), periodos.map(p => {
+    const itens = med.rotina.map((r, i) => ({
+      r,
+      i
+    })).filter(x => x.r.periodo === p);
+    if (!itens.length) return null;
+    return /*#__PURE__*/React.createElement(Cartao, {
+      key: p,
+      estilo: {
+        padding: "13px 14px"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 12,
+        fontWeight: 700,
+        letterSpacing: ".08em",
+        textTransform: "uppercase",
+        color: C.soft,
+        marginBottom: 10
+      }
+    }, p), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        gap: 8
+      }
+    }, itens.map(({
+      r,
+      i
+    }) => {
+      const on = !!checks[r.id];
+      return /*#__PURE__*/React.createElement("div", {
+        key: r.id,
+        style: {
+          display: "flex",
+          alignItems: "center",
+          gap: 10
+        }
+      }, !editando && /*#__PURE__*/React.createElement("button", {
+        onClick: () => toggle(r.id),
+        "aria-pressed": on,
+        style: {
+          flexShrink: 0,
+          width: 26,
+          height: 26,
+          borderRadius: 7,
+          border: "1px solid " + (on ? C.strong : C.line),
+          background: on ? C.done : C.surface,
+          color: "#fff",
+          fontSize: 15,
+          cursor: "pointer",
+          lineHeight: 1
+        }
+      }, on ? "✓" : ""), editando ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("select", {
+        value: r.periodo,
+        onChange: e => setItem(i, "periodo", e.target.value),
+        style: {
+          border: "1px solid " + C.line,
+          borderRadius: 7,
+          padding: "7px",
+          fontSize: 13,
+          fontFamily: "inherit",
+          background: C.surface,
+          color: C.deep
+        }
+      }, periodos.map(pp => /*#__PURE__*/React.createElement("option", {
+        key: pp,
+        value: pp
+      }, pp))), /*#__PURE__*/React.createElement(Campo, {
+        value: r.item,
+        onChange: v => setItem(i, "item", v),
+        style: {
+          flex: 1
+        }
+      }), /*#__PURE__*/React.createElement("button", {
+        onClick: () => remover(i),
+        style: {
+          background: "none",
+          border: "none",
+          color: C.soft,
+          fontSize: 18,
+          cursor: "pointer"
+        }
+      }, "×")) : /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontSize: 14,
+          color: on ? C.soft : C.deep,
+          textDecoration: on ? "line-through" : "none"
+        }
+      }, r.item));
+    })));
+  }), editando && /*#__PURE__*/React.createElement("button", {
+    onClick: adicionar,
+    style: {
+      background: C.surfaceAlt,
+      border: "1px dashed " + C.line,
+      borderRadius: 9,
+      padding: "9px 13px",
+      fontSize: 13,
+      fontWeight: 600,
+      color: C.strong,
+      cursor: "pointer",
+      fontFamily: "inherit"
+    }
+  }, "+ Adicionar item à rotina"));
+}
+function TelaContas({
+  med,
+  onMed,
+  editando
+}) {
+  const d = med.dividas || {
+    total: 0,
+    pago: 0
+  };
+  const saldo = (Number(d.total) || 0) - (Number(d.pago) || 0);
+  function setDiv(campo, val) {
+    const n = clonar(med);
+    n.dividas[campo] = campo === "titulo" ? val : parseFloat(String(val).replace(",", ".")) || 0;
+    onMed(n);
+  }
+  function togglePend(i) {
+    const n = clonar(med);
+    n.pendencias[i].feito = !n.pendencias[i].feito;
+    onMed(n);
+  }
+  function setPend(i, campo, val) {
+    const n = clonar(med);
+    n.pendencias[i][campo] = campo === "valor" ? parseFloat(String(val).replace(",", ".")) || 0 : val;
+    onMed(n);
+  }
+  function removerPend(i) {
+    const n = clonar(med);
+    n.pendencias.splice(i, 1);
+    onMed(n);
+  }
+  function addPend() {
+    const n = clonar(med);
+    n.pendencias.push({
+      id: "p" + Date.now(),
+      texto: "Nova pendência",
+      valor: 0,
+      feito: false
+    });
+    onMed(n);
+  }
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Cartao, null, /*#__PURE__*/React.createElement("h3", {
+    style: {
+      fontFamily: "Georgia, serif",
+      fontSize: 19,
+      fontWeight: 700,
+      margin: "0 0 10px",
+      color: C.deep
+    }
+  }, "Dívida de vacinação"), editando ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    style: lab
+  }, "Título", /*#__PURE__*/React.createElement(Campo, {
+    value: d.titulo,
+    onChange: v => setDiv("titulo", v)
+  })), /*#__PURE__*/React.createElement("label", {
+    style: lab
+  }, "Total", /*#__PURE__*/React.createElement(Campo, {
+    tipo: "number",
+    step: "0.01",
+    value: d.total,
+    onChange: v => setDiv("total", v)
+  })), /*#__PURE__*/React.createElement("label", {
+    style: lab
+  }, "Já pago", /*#__PURE__*/React.createElement(Campo, {
+    tipo: "number",
+    step: "0.01",
+    value: d.pago,
+    onChange: v => setDiv("pago", v)
+  }))) : /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13.5,
+      color: C.mid,
+      marginBottom: 10
+    }
+  }, d.titulo), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "repeat(3,1fr)",
+      gap: 8
+    }
+  }, [["Total", d.total, C.deep], ["Já pago", d.pago, C.strong], ["Saldo", saldo, C.gold]].map((x, k) => /*#__PURE__*/React.createElement("div", {
+    key: k,
+    style: {
+      background: C.surfaceAlt,
+      borderRadius: 11,
+      padding: "11px",
+      textAlign: "center"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11.5,
+      fontWeight: 700,
+      letterSpacing: ".04em",
+      textTransform: "uppercase",
+      color: C.soft
+    }
+  }, x[0]), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "Georgia, serif",
+      fontSize: 18,
+      fontWeight: 700,
+      color: x[2],
+      marginTop: 3
+    }
+  }, fmtBRL(x[1]))))))), /*#__PURE__*/React.createElement(Cartao, null, /*#__PURE__*/React.createElement("h3", {
+    style: {
+      fontFamily: "Georgia, serif",
+      fontSize: 19,
+      fontWeight: 700,
+      margin: "0 0 10px",
+      color: C.deep
+    }
+  }, "Pendências"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 10
+    }
+  }, med.pendencias.map((p, i) => /*#__PURE__*/React.createElement("div", {
+    key: p.id,
+    style: {
+      display: "flex",
+      gap: 10,
+      alignItems: "flex-start",
+      border: "1px solid " + C.line,
+      borderRadius: 11,
+      padding: "10px 11px",
+      background: p.feito ? C.surfaceAlt : C.surface
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => togglePend(i),
+    style: {
+      flexShrink: 0,
+      width: 26,
+      height: 26,
+      borderRadius: 7,
+      border: "1px solid " + (p.feito ? C.strong : C.line),
+      background: p.feito ? C.done : C.surface,
+      color: "#fff",
+      fontSize: 15,
+      cursor: "pointer",
+      marginTop: 1
+    }
+  }, p.feito ? "✓" : ""), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, editando ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 6
+    }
+  }, /*#__PURE__*/React.createElement(AreaTexto, {
+    value: p.texto,
+    onChange: v => setPend(i, "texto", v),
+    rows: 2
+  }), /*#__PURE__*/React.createElement("label", {
+    style: lab
+  }, "Valor", /*#__PURE__*/React.createElement(Campo, {
+    tipo: "number",
+    step: "0.01",
+    value: p.valor,
+    onChange: v => setPend(i, "valor", v)
+  })), /*#__PURE__*/React.createElement("button", {
+    onClick: () => removerPend(i),
+    style: {
+      alignSelf: "flex-start",
+      background: "none",
+      border: "none",
+      color: C.soft,
+      fontSize: 13,
+      cursor: "pointer",
+      textDecoration: "underline"
+    }
+  }, "remover")) : /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 14,
+      color: p.feito ? C.soft : C.deep,
+      textDecoration: p.feito ? "line-through" : "none",
+      lineHeight: 1.55
+    }
+  }, p.texto), p.valor ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 600,
+      color: C.strong,
+      marginTop: 3
+    }
+  }, fmtBRL(p.valor)) : null))))), editando && /*#__PURE__*/React.createElement("button", {
+    onClick: addPend,
+    style: {
+      marginTop: 10,
+      background: C.surfaceAlt,
+      border: "1px dashed " + C.line,
+      borderRadius: 9,
+      padding: "8px 12px",
+      fontSize: 13,
+      fontWeight: 600,
+      color: C.strong,
+      cursor: "pointer",
+      fontFamily: "inherit"
+    }
+  }, "+ Adicionar pendência")));
+}
+function TelaAvisos({
+  med,
+  onMed,
+  editando
+}) {
+  function setAlerta(i, val) {
+    const n = clonar(med);
+    n.alertas[i].texto = val;
+    onMed(n);
+  }
+  function removerAlerta(i) {
+    const n = clonar(med);
+    n.alertas.splice(i, 1);
+    onMed(n);
+  }
+  function addAlerta() {
+    const n = clonar(med);
+    n.alertas.push({
+      id: "a" + Date.now(),
+      texto: "Novo aviso"
+    });
+    onMed(n);
+  }
+  function setRec(i, val) {
+    const n = clonar(med);
+    n.recomendacoes[i] = val;
+    onMed(n);
+  }
+  function removerRec(i) {
+    const n = clonar(med);
+    n.recomendacoes.splice(i, 1);
+    onMed(n);
+  }
+  function addRec() {
+    const n = clonar(med);
+    n.recomendacoes.push("Nova recomendação");
+    onMed(n);
+  }
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Cartao, null, /*#__PURE__*/React.createElement("h3", {
+    style: {
+      fontFamily: "Georgia, serif",
+      fontSize: 19,
+      fontWeight: 700,
+      margin: "0 0 10px",
+      color: C.deep
+    }
+  }, "Alertas"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 10
+    }
+  }, med.alertas.map((a, i) => /*#__PURE__*/React.createElement("div", {
+    key: a.id,
+    style: {
+      background: "#FBF0DA",
+      border: "1px solid " + C.gold,
+      borderRadius: 11,
+      padding: "11px 12px"
+    }
+  }, editando ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 6
+    }
+  }, /*#__PURE__*/React.createElement(AreaTexto, {
+    value: a.texto,
+    onChange: v => setAlerta(i, v),
+    rows: 3
+  }), /*#__PURE__*/React.createElement("button", {
+    onClick: () => removerAlerta(i),
+    style: {
+      alignSelf: "flex-start",
+      background: "none",
+      border: "none",
+      color: C.soft,
+      fontSize: 13,
+      cursor: "pointer",
+      textDecoration: "underline"
+    }
+  }, "remover")) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13.5,
+      color: "#5b4410",
+      lineHeight: 1.6
+    }
+  }, /*#__PURE__*/React.createElement("strong", null, "Atenção. "), a.texto)))), editando && /*#__PURE__*/React.createElement("button", {
+    onClick: addAlerta,
+    style: {
+      marginTop: 10,
+      background: C.surfaceAlt,
+      border: "1px dashed " + C.line,
+      borderRadius: 9,
+      padding: "8px 12px",
+      fontSize: 13,
+      fontWeight: 600,
+      color: C.strong,
+      cursor: "pointer",
+      fontFamily: "inherit"
+    }
+  }, "+ Adicionar alerta")), /*#__PURE__*/React.createElement(Cartao, null, /*#__PURE__*/React.createElement("h3", {
+    style: {
+      fontFamily: "Georgia, serif",
+      fontSize: 19,
+      fontWeight: 700,
+      margin: "0 0 10px",
+      color: C.deep
+    }
+  }, "Recomendações gerais"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 8
+    }
+  }, med.recomendacoes.map((r, i) => editando ? /*#__PURE__*/React.createElement("div", {
+    key: i,
+    style: {
+      display: "flex",
+      gap: 8,
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement(AreaTexto, {
+    value: r,
+    onChange: v => setRec(i, v),
+    rows: 2
+  }), /*#__PURE__*/React.createElement("button", {
+    onClick: () => removerRec(i),
+    style: {
+      background: "none",
+      border: "none",
+      color: C.soft,
+      fontSize: 18,
+      cursor: "pointer"
+    }
+  }, "×")) : /*#__PURE__*/React.createElement("div", {
+    key: i,
+    style: {
+      display: "flex",
+      gap: 9,
+      fontSize: 14,
+      color: C.deep,
+      lineHeight: 1.6
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: C.gold,
+      flexShrink: 0
+    }
+  }, "•"), /*#__PURE__*/React.createElement("span", null, r)))), editando && /*#__PURE__*/React.createElement("button", {
+    onClick: addRec,
+    style: {
+      marginTop: 10,
+      background: C.surfaceAlt,
+      border: "1px dashed " + C.line,
+      borderRadius: 9,
+      padding: "8px 12px",
+      fontSize: 13,
+      fontWeight: 600,
+      color: C.strong,
+      cursor: "pointer",
+      fontFamily: "inherit"
+    }
+  }, "+ Adicionar recomendação")));
+}
+const lab = {
+  display: "flex",
+  flexDirection: "column",
+  gap: 3,
+  fontSize: 11.5,
+  fontWeight: 600,
+  color: C.soft,
+  letterSpacing: ".02em"
+};
+
+/* ---------- Seção médica (container com sub-abas) ---------- */
+const MED_ABAS = [{
+  id: "caes",
+  nome: "Cães"
+}, {
+  id: "clinicas",
+  nome: "Clínicas"
+}, {
+  id: "vacinas",
+  nome: "Vacinas"
+}, {
+  id: "tratamentos",
+  nome: "Tratamentos"
+}, {
+  id: "rotina",
+  nome: "Rotina"
+}, {
+  id: "contas",
+  nome: "Contas"
+}, {
+  id: "avisos",
+  nome: "Avisos"
+}];
+const MED_TITULOS = {
+  caes: "Cadastro dos cães",
+  clinicas: "Clínicas e preços",
+  vacinas: "Calendário de vacinação",
+  tratamentos: "Tratamentos",
+  rotina: "Rotina de remédios",
+  contas: "Contas e pendências",
+  avisos: "Alertas e recomendações"
+};
+function SecaoMedica() {
+  const [med, setMed] = useState(carregarMedicoLocal);
+  const [aba, setAba] = useState("caes");
+  const [editando, setEditando] = useState(false);
+  const hoje = todayStr();
+  useEffect(function () {
+    _medOnData = function (novo) {
+      setMed(novo);
+    };
+    ativarSyncMedico(0);
+    return function () {
+      _medOnData = null;
+    };
+  }, []);
+  function onMed(novo) {
+    setMed(novo);
+    salvarMedico(novo);
+  }
+  const props = {
+    med: med,
+    onMed: onMed,
+    editando: editando,
+    hoje: hoje
+  };
+  const edicaoDisponivel = aba !== null;
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      maxWidth: 680,
+      margin: "0 auto",
+      padding: "4px 16px 48px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 7,
+      overflowX: "auto",
+      paddingBottom: 6,
+      marginBottom: 14
+    }
+  }, MED_ABAS.map(function (a) {
+    const at = a.id === aba;
+    return /*#__PURE__*/React.createElement("button", {
+      key: a.id,
+      onClick: function () {
+        setAba(a.id);
+        setEditando(false);
+      },
+      style: {
+        flexShrink: 0,
+        border: "1px solid " + (at ? C.strong : C.line),
+        background: at ? C.strong : C.surface,
+        color: at ? "#fff" : C.deep,
+        borderRadius: 999,
+        padding: "8px 15px",
+        fontSize: 13.5,
+        fontWeight: 600,
+        cursor: "pointer",
+        fontFamily: "inherit"
+      }
+    }, a.nome);
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 10,
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontFamily: "Georgia, serif",
+      fontSize: 23,
+      fontWeight: 700,
+      margin: 0,
+      color: C.deep
+    }
+  }, MED_TITULOS[aba]), edicaoDisponivel && /*#__PURE__*/React.createElement(BotaoEditar, {
+    ativo: editando,
+    onClick: function () {
+      setEditando(!editando);
+    }
+  })), aba === "caes" && /*#__PURE__*/React.createElement(TelaCaes, props), aba === "clinicas" && /*#__PURE__*/React.createElement(TelaClinicas, props), aba === "vacinas" && /*#__PURE__*/React.createElement(TelaVacinas, props), aba === "tratamentos" && /*#__PURE__*/React.createElement(TelaTratamentos, props), aba === "rotina" && /*#__PURE__*/React.createElement(TelaRotina, props), aba === "contas" && /*#__PURE__*/React.createElement(TelaContas, props), aba === "avisos" && /*#__PURE__*/React.createElement(TelaAvisos, props));
+}
+
+/* ---------- App: seletor de seção Passeios / Médico ---------- */
+function App() {
+  const [secao, setSecao] = useState("passeios");
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      minHeight: "100vh",
+      background: C.bg
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "sticky",
+      top: 0,
+      zIndex: 50,
+      background: C.done,
+      paddingTop: "max(8px, env(safe-area-inset-top,0px))",
+      paddingBottom: 8,
+      paddingLeft: "max(16px, env(safe-area-inset-left,0px))",
+      paddingRight: "max(16px, env(safe-area-inset-right,0px))"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      maxWidth: 680,
+      margin: "0 auto",
+      display: "flex",
+      gap: 8
+    }
+  }, [{
+    id: "passeios",
+    n: "Passeios"
+  }, {
+    id: "medico",
+    n: "Médico"
+  }].map(function (s) {
+    const at = s.id === secao;
+    return /*#__PURE__*/React.createElement("button", {
+      key: s.id,
+      onClick: function () {
+        setSecao(s.id);
+      },
+      "aria-pressed": at,
+      style: {
+        flex: 1,
+        border: "1px solid " + (at ? "#fff" : "rgba(255,255,255,0.35)"),
+        background: at ? "#fff" : "transparent",
+        color: at ? C.done : "#fff",
+        borderRadius: 11,
+        padding: "10px",
+        fontSize: 15,
+        fontWeight: 700,
+        cursor: "pointer",
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+      }
+    }, s.n);
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: secao === "passeios" ? "block" : "none"
+    }
+  }, /*#__PURE__*/React.createElement(CalendarioPasseios, null)), secao === "medico" && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      color: C.deep,
+      paddingTop: 18
+    }
+  }, /*#__PURE__*/React.createElement(SecaoMedica, null)));
+}
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(React.createElement(CalendarioPasseios));</script>
+root.render(React.createElement(App));</script>
 </body>
 </html>

@@ -14,8 +14,9 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
 <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
 <link rel="manifest" href="manifest.json" />
-<script async src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script async src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -4234,8 +4235,9 @@ function SecaoMedica() {
   })), aba === "caes" && /*#__PURE__*/React.createElement(TelaCaes, props), aba === "clinicas" && /*#__PURE__*/React.createElement(TelaClinicas, props), aba === "vacinas" && /*#__PURE__*/React.createElement(TelaVacinas, props), aba === "tratamentos" && /*#__PURE__*/React.createElement(TelaTratamentos, props), aba === "calendario" && /*#__PURE__*/React.createElement(TelaCalendarioJoey, props), aba === "rotina" && /*#__PURE__*/React.createElement(TelaRotina, props), aba === "contas" && /*#__PURE__*/React.createElement(TelaContas, props), aba === "avisos" && /*#__PURE__*/React.createElement(TelaAvisos, props));
 }
 
-/* ---------- App: seletor de seção Passeios / Médico ---------- */
-function App() {
+/* ---------- Conteúdo do app (depois do login): seletor Passeios / Médico ---------- */
+function AppConteudo(props) {
+  const onSair = props.onSair;
   const [secao, setSecao] = useState("medico");
   return /*#__PURE__*/React.createElement("div", {
     style: {
@@ -4258,7 +4260,8 @@ function App() {
       maxWidth: 680,
       margin: "0 auto",
       display: "flex",
-      gap: 8
+      gap: 8,
+      alignItems: "center"
     }
   }, [{
     id: "passeios",
@@ -4287,7 +4290,22 @@ function App() {
         fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
       }
     }, s.n);
-  }))), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("button", {
+    onClick: onSair,
+    title: "Sair",
+    style: {
+      flexShrink: 0,
+      border: "1px solid rgba(255,255,255,0.35)",
+      background: "transparent",
+      color: "#fff",
+      borderRadius: 11,
+      padding: "10px 13px",
+      fontSize: 13,
+      fontWeight: 600,
+      cursor: "pointer",
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+    }
+  }, "Sair"))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: secao === "passeios" ? "block" : "none"
     }
@@ -4298,6 +4316,206 @@ function App() {
       paddingTop: 18
     }
   }, /*#__PURE__*/React.createElement(SecaoMedica, null)));
+}
+
+/* ---------- Login: só a conta liberada entra ---------- */
+const EMAIL_LIBERADO = "isavfortunato@gmail.com";
+function TelaLogin() {
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
+  const [carregando, setCarregando] = useState(false);
+  const inp = {
+    width: "100%",
+    boxSizing: "border-box",
+    border: "1px solid " + C.line,
+    borderRadius: 12,
+    padding: "12px 14px",
+    fontSize: 15,
+    marginBottom: 12,
+    background: "#fff",
+    color: C.deep,
+    fontFamily: "inherit"
+  };
+  function entrar(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    setErro("");
+    if (!email || !senha) {
+      setErro("Preencha o e-mail e a senha.");
+      return;
+    }
+    if (typeof firebase === "undefined" || !firebase.auth) {
+      setErro("O login ainda está carregando. Tente de novo em um instante.");
+      return;
+    }
+    setCarregando(true);
+    firebase.auth().signInWithEmailAndPassword(email.trim(), senha).catch(function (err) {
+      setCarregando(false);
+      const c = err && err.code ? err.code : "";
+      if (c === "auth/invalid-email") setErro("E-mail inválido.");else if (c === "auth/user-not-found" || c === "auth/wrong-password" || c === "auth/invalid-credential" || c === "auth/invalid-login-credentials") setErro("E-mail ou senha incorretos.");else if (c === "auth/too-many-requests") setErro("Muitas tentativas seguidas. Espere um pouco e tente de novo.");else if (c === "auth/network-request-failed") setErro("Sem conexão. Verifique a internet e tente de novo.");else setErro("Não foi possível entrar. Tente de novo.");
+    });
+  }
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      minHeight: "100vh",
+      background: C.bg,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "24px 16px",
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+    }
+  }, /*#__PURE__*/React.createElement("form", {
+    onSubmit: entrar,
+    style: {
+      width: "100%",
+      maxWidth: 360,
+      background: C.surface,
+      border: "1px solid " + C.line,
+      borderRadius: 20,
+      padding: 28,
+      boxShadow: "0 8px 30px rgba(28,66,39,0.08)",
+      textAlign: "center"
+    }
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "apple-touch-icon.png",
+    alt: "",
+    width: "76",
+    height: "76",
+    style: {
+      borderRadius: 20,
+      display: "block",
+      margin: "0 auto 14px"
+    }
+  }), /*#__PURE__*/React.createElement("h1", {
+    style: {
+      fontFamily: "Georgia, serif",
+      fontSize: 26,
+      margin: "0 0 4px",
+      color: C.deep
+    }
+  }, "Bebezitos"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: "0 0 22px",
+      color: C.mid,
+      fontSize: 14
+    }
+  }, "Entre para acessar os passeios e a parte médica."), /*#__PURE__*/React.createElement("input", {
+    type: "email",
+    inputMode: "email",
+    autoComplete: "username",
+    autoCapitalize: "none",
+    autoCorrect: "off",
+    placeholder: "E-mail",
+    value: email,
+    onChange: function (e) {
+      setEmail(e.target.value);
+    },
+    style: inp
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "password",
+    autoComplete: "current-password",
+    placeholder: "Senha",
+    value: senha,
+    onChange: function (e) {
+      setSenha(e.target.value);
+    },
+    style: inp
+  }), erro ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: "#B4442B",
+      fontSize: 13,
+      margin: "2px 0 12px",
+      textAlign: "left"
+    }
+  }, erro) : null, /*#__PURE__*/React.createElement("button", {
+    type: "submit",
+    disabled: carregando,
+    style: {
+      width: "100%",
+      border: "none",
+      background: C.strong,
+      color: "#fff",
+      borderRadius: 12,
+      padding: "13px",
+      fontSize: 15.5,
+      fontWeight: 700,
+      cursor: carregando ? "default" : "pointer",
+      opacity: carregando ? 0.7 : 1
+    }
+  }, carregando ? "Entrando..." : "Entrar")));
+}
+function telaAviso(texto, onSair) {
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      minHeight: "100vh",
+      background: C.bg,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "24px 16px",
+      textAlign: "center",
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      color: C.mid,
+      fontSize: 15
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: onSair ? 16 : 0
+    }
+  }, texto), onSair ? /*#__PURE__*/React.createElement("button", {
+    onClick: onSair,
+    style: {
+      border: "1px solid " + C.line,
+      background: C.surface,
+      color: C.deep,
+      borderRadius: 11,
+      padding: "9px 18px",
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: "pointer"
+    }
+  }, "Sair") : null));
+}
+
+/* ---------- App: porta de entrada com login ---------- */
+function App() {
+  const [user, setUser] = useState(null); // null: carregando, false: deslogado, objeto: logado
+  useEffect(function () {
+    let cancelado = false;
+    function liga(tentativa) {
+      if (cancelado) return;
+      if (typeof firebase === "undefined" || !firebase.auth) {
+        if ((tentativa || 0) < 40) setTimeout(function () {
+          liga((tentativa || 0) + 1);
+        }, 250);else setUser(false);
+        return;
+      }
+      try {
+        if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        firebase.auth().onAuthStateChanged(function (u) {
+          if (!cancelado) setUser(u || false);
+        });
+      } catch (e) {
+        if (!cancelado) setUser(false);
+      }
+    }
+    liga(0);
+    return function () {
+      cancelado = true;
+    };
+  }, []);
+  function sair() {
+    try {
+      firebase.auth().signOut();
+    } catch (e) {}
+  }
+  if (user === null) return telaAviso("Carregando...", null);
+  if (!user) return /*#__PURE__*/React.createElement(TelaLogin, null);
+  if (user.email !== EMAIL_LIBERADO) return telaAviso("Esta conta não tem acesso ao app.", sair);
+  return /*#__PURE__*/React.createElement(AppConteudo, {
+    onSair: sair
+  });
 }
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(React.createElement(App));</script>

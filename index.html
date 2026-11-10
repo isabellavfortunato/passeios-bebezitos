@@ -493,10 +493,40 @@ function indiceCiclo(ds) {
   return semana * 7 + dt.getDay();
 }
 const WALKS = [1, 2, 3, 4];
+// Combinações fixas das levas. Cada leva é um grupo que sai junto.
+// Uma volta completa (as 4 levas) cobre os sete cães uma vez.
+const COMBOS = [["joey"], ["amy", "lorelai"], ["peralta", "sheldon"], ["raj", "fujao"]];
+let LEVAS = (function () {
+  try {
+    var v = parseInt(localStorage.getItem("passeios:__levas__"), 10);
+    if (v === 1 || v === 2 || v === 3) return v;
+  } catch (e) {}
+  return 1;
+})();
+let _onLevas = null;
+function salvarLevas(n) {
+  LEVAS = n;
+  try { localStorage.setItem("passeios:__levas__", String(n)); } catch (e) {}
+  if (_syncPronto && _db) {
+    try { _db.collection("dias").doc("__levas__").set({ levas: n }); } catch (e) {}
+  }
+}
+function indiceDia(ds) {
+  const dt = new Date(ds + "T12:00:00");
+  const ep = new Date(EPOCA + "T12:00:00");
+  return Math.round((dt - ep) / 86400000);
+}
+// Sugestão do dia: a partir do número de levas, pega esse tanto de combinações
+// da lista, girando dia após dia para alternar quem sai.
 function sugestaoParaData(ds) {
-  return {
-    ...CICLO[indiceCiclo(ds)]
-  };
+  const n = LEVAS;
+  const k = indiceDia(ds);
+  const start = (((k * n) % COMBOS.length) + COMBOS.length) % COMBOS.length;
+  const assign = {};
+  for (let i = 0; i < n; i++) {
+    COMBOS[(start + i) % COMBOS.length].forEach(function (dog) { assign[dog] = i + 1; });
+  }
+  return assign;
 }
 const C = {
   bg: "#E7EFDF",
@@ -659,6 +689,15 @@ function ativarSync(tentativa) {
       snap.docChanges().forEach(function (ch) {
         var id = ch.doc.id;
         var data = ch.doc.data() || {};
+        if (id === "__levas__") {
+          var lv = parseInt(data.levas, 10);
+          if (lv === 1 || lv === 2 || lv === 3) {
+            LEVAS = lv;
+            try { localStorage.setItem("passeios:__levas__", String(lv)); } catch (e) {}
+            if (_onLevas) _onLevas();
+          }
+          return;
+        }
         try {
           var mot = data.motivo != null ? data.motivo : data.chuva ? "chuva" : "";
           var novo = JSON.stringify({
@@ -698,6 +737,7 @@ function CalendarioPasseios() {
   const [abrirMotivo, setAbrirMotivo] = useState(false);
   const [sincronizado, setSincronizado] = useState(false);
   const [tick, setTick] = useState(0);
+  const [levasState, setLevasState] = useState(LEVAS);
   const dateRef = useRef(date);
   dateRef.current = date;
   useEffect(() => {
@@ -711,11 +751,23 @@ function CalendarioPasseios() {
     _onSyncReady = function () {
       setSincronizado(true);
     };
+    _onLevas = function () {
+      setLevasState(LEVAS);
+      const dnow = dateRef.current;
+      if (dnow >= todayStr()) {
+        const dados = carregarNorm(dnow);
+        setAssign(dados.assign);
+        setFeitos(dados.feitos);
+        setMotivo(dados.motivo);
+      }
+      setTick(function (t) { return t + 1; });
+    };
     if (_syncPronto) setSincronizado(true);
     ativarSync(0);
     return function () {
       _onRemote = null;
       _onSyncReady = null;
+      _onLevas = null;
     };
   }, []);
   useEffect(() => {
@@ -786,6 +838,19 @@ function CalendarioPasseios() {
       motivo: ""
     });
   }
+  function mudarLevas(n) {
+    salvarLevas(n);
+    setLevasState(n);
+    if (date >= todayStr()) {
+      aplicar({
+        assign: sugestaoParaData(date),
+        feitos: {},
+        motivo: ""
+      });
+      setActive(1);
+    }
+    setTick(function (t) { return t + 1; });
+  }
   function estadoCao(dogId) {
     const p = assign[dogId];
     if (!p) return {
@@ -807,6 +872,8 @@ function CalendarioPasseios() {
   const noPasseioAtivo = DOGS.filter(d => assign[d.id] === active);
   const ativoFeito = Boolean(feitos[active]);
   const ehHoje = date === todayStr();
+  const maxComDog = DOGS.reduce((m, d) => Math.max(m, assign[d.id] || 0), 0);
+  const walksMostrar = Array.from({ length: Math.max(levasState, maxComDog, 1) }, (_, i) => i + 1);
 
   // Dia concluído: todos os que iam sair já saíram.
   const tudoFeito = !motivo && faltamCaes.length === 0 && feitosCaes.length > 0;
@@ -1163,6 +1230,58 @@ function CalendarioPasseios() {
   }
 
   // ---------- TELA NORMAL ----------
+  const seletorLevas = date >= todayStr() ? /*#__PURE__*/React.createElement("section", {
+    style: {
+      background: C.surface,
+      border: "1px solid " + C.line,
+      borderRadius: 16,
+      padding: "12px 14px",
+      marginBottom: 14,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 700,
+      letterSpacing: "0.08em",
+      textTransform: "uppercase",
+      color: C.soft
+    }
+  }, "Levas por dia"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: C.mid,
+      marginTop: 2
+    }
+  }, "Quantos passeios o app sugere por dia")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 6
+    }
+  }, [1, 2, 3].map(function (n) {
+    const at = n === levasState;
+    return /*#__PURE__*/React.createElement("button", {
+      key: n,
+      onClick: function () { mudarLevas(n); },
+      "aria-pressed": at,
+      style: {
+        width: 42,
+        height: 42,
+        borderRadius: 11,
+        border: "1px solid " + (at ? C.strong : C.line),
+        background: at ? C.strong : C.surface,
+        color: at ? "#fff" : C.deep,
+        fontFamily: "Georgia, serif",
+        fontSize: 19,
+        fontWeight: 700,
+        cursor: "pointer",
+        transition: "all 140ms ease"
+      }
+    }, n);
+  }))) : null;
   return /*#__PURE__*/React.createElement("div", {
     style: wrapStyle
   }, /*#__PURE__*/React.createElement(Confete, {
@@ -1319,14 +1438,14 @@ function CalendarioPasseios() {
       fontSize: 13.5,
       color: C.plan
     }
-  }, "Os passeios de hoje estão todos feitos. ", feitosCaes.length === 7 ? "Os sete" : feitosCaes.length + " cães", " já passearam."))), /*#__PURE__*/React.createElement("div", {
+  }, "Os passeios de hoje estão todos feitos. ", feitosCaes.length === 7 ? "Os sete" : feitosCaes.length + " cães", " já passearam."))), seletorLevas, /*#__PURE__*/React.createElement("div", {
     style: {
       display: "grid",
-      gridTemplateColumns: "repeat(4, 1fr)",
+      gridTemplateColumns: "repeat(" + walksMostrar.length + ", 1fr)",
       gap: 8,
       marginBottom: 14
     }
-  }, WALKS.map(w => {
+  }, walksMostrar.map(w => {
     const ativo = w === active;
     const qtd = DOGS.filter(d => assign[d.id] === w).length;
     const wFeito = Boolean(feitos[w]);
@@ -1688,7 +1807,7 @@ function CalendarioPasseios() {
       color: C.soft,
       lineHeight: 1.5
     }
-  }, "A sugestão segue um ciclo de duas semanas. Como o Joey sai sempre sozinho e a Amy reveza entre sair sozinha e sair com a Lorelai, os dois ocupam um passeio inteiro e por isso folgam menos: o Joey cerca de quatro dias por mês e a Amy cerca de dois, metade dele. Os outros cinco andam em dupla e dividem o resto por igual, com cerca de nove folgas por mês cada um. Ao marcar um passeio como feito, as fichas do panorama ficam verde escuro. Quem folga no dia fica de fora. Se não houver passeio, o seletor no final registra o motivo, seja porque não deu para ir ou porque está chovendo.")));
+  }, "A sugestão usa combinações fixas: o Joey sai sozinho, a Amy sai com a Lorelai, o Peralta com o Sheldon e o Raj com o Fujão. Em levas por dia você escolhe quantos passeios o app sugere a cada dia, de 1 a 3, e as combinações vão girando de um dia para o outro para todo mundo ir saindo. Com mais levas por dia, cada cão sai mais vezes na semana. Ao marcar um passeio como feito, as fichas do panorama ficam verde escuro. Quem não sai no dia fica de fora. Se não houver passeio, o seletor no final registra o motivo, seja porque não deu para ir ou porque está chovendo.")));
 }
 function Confete({
   ativo,
